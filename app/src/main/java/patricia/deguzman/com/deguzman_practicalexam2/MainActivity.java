@@ -14,7 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 public class MainActivity extends AppCompatActivity {
-    EditText eFirstName, eLastName, eExam1, eExam2;
+    EditText eFirstName, eLastName, eExam1, eExam2, eAverage;
     TextView tFirstName, tLastName, tExam1, tExam2;
 
     @Override
@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
         eLastName = findViewById(R.id.etLastName);
         eExam1 = findViewById(R.id.etExam1);
         eExam2 = findViewById(R.id.etExam2);
+        eAverage = findViewById(R.id.etAverage);
+
 
         tFirstName = findViewById(R.id.etFirstName);
         tLastName = findViewById(R.id.etLastName);
@@ -51,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
     public void saveExternal(View v){
         File folder = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File file = new File(folder, "external.txt");
+        FileInputStream fin = null;
+        int c;
+        StringBuffer buffer = new StringBuffer();
 
         String efname = eFirstName.getText().toString();
         String elname = eLastName.getText().toString();
@@ -62,8 +67,14 @@ public class MainActivity extends AppCompatActivity {
             fos = new FileOutputStream(file);
             fos.write(efname.getBytes());
             fos.write(elname.getBytes());
+            fos.write(String.valueOf(average).getBytes());
             Toast.makeText(this, "Data saved in sd card", Toast.LENGTH_LONG).show();
             fos.close();
+            fin = new FileInputStream(file);
+            while((c = fin.read())!=-1){
+                buffer.append((char)c);
+            }
+            eAverage.setText(buffer.toString());
         }
         catch(Exception e){
             Toast.makeText(this, "Error writing on sd card", Toast.LENGTH_LONG).show();
@@ -81,26 +92,4 @@ public class MainActivity extends AppCompatActivity {
         tExam1.setText(ex1);
         tExam2.setText(ex2);
     }
-
-    public void loadExternal(View v){
-        File folder = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        File file = new File(folder, "external.txt");
-        FileInputStream fin = null;
-        int c;
-        StringBuffer buffer = new StringBuffer();
-        try{
-            fin = new FileInputStream(file);
-            while((c = fin.read())!=1){
-                buffer.append((char)c);
-            }
-            tFirstName.setText(buffer.toString());
-            tLastName.setText(buffer.toString());
-            Toast.makeText(this, "Success", Toast.LENGTH_LONG).show();
-        }
-        catch(Exception e){
-            Toast.makeText(this, "Error reading", Toast.LENGTH_LONG).show();
-        }
-    }
-
-
 }
